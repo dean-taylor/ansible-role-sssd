@@ -1,4 +1,6 @@
 ---
 # defaults file for sssd
-sssd_services: []
 sssd_domains: []
+sssd_services: {}
+sssd_systemd: true
+sssd_tls_cacert: ""

@@ -1,2 +1,18 @@
 ---
 # handlers file for sssd
+- name: restart sssd
+  ansible.builtin.service:
+    name: sssd.service
+    state: restarted
+  when:
+    - sssd_domains |length >0
+
+- name: enable services
+  ansible.builtin.service:
+    enabled: yes
+    name: "sssd-{{ item }}.socket"
+    state: started
+  with_items: "{{ sssd_services.keys() |default([]) }}"
+  when:
+    - sssd_systemd
+    - sssd_domains |length >0

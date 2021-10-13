@@ -1,2 +1,31 @@
 [sssd]
 config_file_version = 2
+{% if sssd_services |length >0 %}
+{% if sssd_systemd %}# {% endif %}
+services = {{ sssd_services.keys() | sort |join(', ') }}
+{% endif %}
+{% if sssd_domains |length >0 %}
+domains = {{ sssd_domains[0].name }}
+{% endif %}
+
+{% if sssd_services |length >0 %}
+{% for service_name,service in sssd_services.items() %}
+[{{ service_name }}]
+{% if service %}
+{% for opt_name,opt in service.items() %}
+{{ opt_name }} = {{ opt }}
+{% endfor %}
+{% endif %}
+
+{% endfor %}
+{% endif %}
+
+{% for domain in sssd_domains %}
+[domain/{{ domain.name }}]
+{% for opt_name,opt in (domain.items() |sort) %}
+{% if opt_name != "name" %}
+{{ opt_name }} = {{ opt }}
+{% endif %}
+{% endfor %}
+
+{% endfor %}

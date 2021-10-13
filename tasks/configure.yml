@@ -1,9 +1,23 @@
 ---
 # tasks file for sssd configure
 #
-- name: enable service
-  ansible.builtin.service:
-    enabled: yes
-    name: "sssd-{{ item }}.socket"
-    state: started
-  with_items: "{{ sssd_services }}"
+- name: /etc/sssd/sssd.conf
+  ansible.builtin.template:
+    dest: /etc/sssd/sssd.conf
+    group: root
+    mode: 0600
+    owner: root
+    src: sssd.conf.j2
+  notify:
+    - restart sssd
+    - enable services
+
+- name: cert files
+  ansible.builtin.copy:
+    content: "{{ sssd_tls_cacert }}"
+    dest: "{{ sssd_tls_cacert_path | default('/etc/ssl/certs/cacert.crt') }}"
+    mode: 0644
+  notify:
+    - restart sssd
+  when:
+    - sssd_tls_cacert
