@@ -1,0 +1,9 @@
+---
+# tasks file for sssd configure
+#
+- name: enable service
+  ansible.builtin.service:
+    enabled: yes
+    name: "sssd-{{ item }}.socket"
+    state: started
+  with_items: "{{ sssd_services }}"

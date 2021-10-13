@@ -1,2 +1,3 @@
 ---
 # vars file for sssd
+sssd_packages: [ "sssd" ]
